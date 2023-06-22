@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Drive - Google Drive</title>
+    <link rel="Short Icon" type="image/png" ; th:href="@{/logo.png}">
+    <style>
+#navigation {
+      width: 270px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding: 20px;
+    }
+    #navigation-right {
+      width: 30px;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding: 20px;
+      margin: 0px 0px 0px 96%;
+    }
+    #navigation ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    #navigation ul li {
+      margin-bottom: 10px;
+    }
+    #navigation ul li a {
+      text-decoration: none;
+      color: #333;
+    }
+    #fixed-page{
+      background-color: white;
+      margin-left: 280px;
+      width:80.30%;
+      padding: 20px;
+      padding-right:7px;
+    }
+
+    #content {
+      margin-left: 280px;
+      margin-right:55px;
+      padding: 20px;
+      padding-right:7px;
+      background-color: white;
+      height: 750px; /* Set the desired height */
+      overflow: auto; /* Enable scrolling */
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f6fafa;
+    }
+    #header {
+      color: #fff;
+      padding: 10px;
+      height: 50px;
+      width:100%;
+    }
+    .dropdown{
+     border: none;  width: 130px;
+     height: 50px; border-radius:15px;
+     background-color: white;
+     font-size:25px;
+    }
+.dropdown:hover{
+    background-color: #f1f1f1;
+    }
+    .inner-dropdown{
+    width: 100px;
+    height: 30px;
+    border-radius:10px;
+    background-color: white;
+    font-size:16px;
+    }
+    .dropdown-form{
+    margin-left:10px;
+
+    }
+    #search-form {
+        margin: 0px 0% 0px 20%;
+    }
+    #search-form input[type="text"] {
+      width: 70%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 40px;
+      height: 35px;
+      background-color: #f3fafa;
+    }
+    #button{
+        border-radius: 50px;
+        color: #ccc;
+        margin: -40px 0% 0px 74%;
+    }
+    #buttons{
+        border-radius: 50px;
+        color: #ccc;
+         margin: -28px 0% 0px 88%;
+    }
+    button {
+        border-radius: 60%;
+        margin-right: 15px;
+    }
+     table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+    th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+    th {
+    background-color: #f2f2f2;
+  }
+    tr:hover {
+    background-color: #f5f5f5;
+  }
+    a {
+    color: blue;
+    text-decoration: none;
+  }
+
+   a:hover {
+    text-decoration: underline;
+  }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #b1b1b1;
+      border: 1px solid #ccc;
+      padding: 20px;
+      z-index: 1;
+    }
+    .popup-form input[type="text"],
+    .popup-form input[type="email"],
+    .popup-form input[type="submit"] {
+      margin-bottom: 10px;
+    }
+     #toggle-forms{
+    display:flex;
+    margin-left:50%;
+    margin-top:0%;
+    position:absolute;
+    flex-direction:column;
+    border: 1px solid black;
+    width:fit-content;
+    }
+.form-container {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-left:45%;
+  width: 200px;
+  display:none;
+  position:absolute;
+}
+.form-container form {
+  margin: 0;
+}
+.form-container h2 {
+  margin: 0 0 20px;
+}
+.link-list {
+  display: flex;
+  flex-direction: column;
+  background-color:white;
+}
+.link-list a {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #333;
+  display: block;
+  margin-bottom: 10px;
+  padding: 10px;
+  text-decoration: none;
+}
+.link-list a:hover {
+  background-color: #f5f5f5;
+}
+  #calendar {
+      display: none;
+      width: 20%;
+      height: 400px;
+      position:absolute;
+      background-color:white;
+      margin-left:55%;
+    }
+    #calender-logo{
+    width:25px; height:25px;
+    margin:60px 20px 0px 0px;
+    }
+    .right-side-logo{
+    width:25px; height:25px;
+    margin:40px 20px 0px 0px;
+    }
+    .left-nav-button:hover{
+     border-radius:100px;
+    background-color:#e8e5df;
+    }
+
+    .image-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.image-item {
+  text-align: center;
+}
+
+.thumbnail-image {
+  width: 200px;
+  height: 150px;
+}
+
+.file-name {
+  display: block;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  color: #555;
+}
+
+.list-layout-image {
+  position: absolute;
+  margin-right:180px;
+  margin-top:95px;
+  top: 0;
+  right: 0;
+  width: 23px;
+  height: 23px;
+}
+#grid-layout-content {
+  display: none;
+}
+
+.list-layout-image.grid-layout {
+  background-image: url("gridlayout.png");
+}
+
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+    <script>
+    $(document).ready(function() {
+      var calendarVisible = false;
+      var $calendar = $('#calendar');
+      function toggleCalendar() {
+        calendarVisible = !calendarVisible;
+        $calendar.toggle(calendarVisible);
+      }
+      $('#showCalendarButton').click(function() {
+        toggleCalendar();
+      });
+      $calendar.fullCalendar({
+      });
+    });
+
+    </script>
+    <script>
+    function toggleForm() {
+      var form = document.getElementById("myForm");
+      if (form.style.display === "none") {
+        form.style.display = "block";
+      } else {
+        form.style.display = "none";
+      }
+    }
+    function togglePopup() {
+      var popup = document.getElementById("myPopup");
+      if (popup.style.display === "none") {
+        popup.style.display = "block";
+      } else {
+        popup.style.display = "none";
+      }
+    }
+    function togglePopupFix(){
+    var popup = document.getElementById("fixed-popup");
+      if (popup.style.display === "none") {
+        popup.style.display = "flex";
+      } else {
+        popup.style.display = "none";
+      }
+    }
+    function submitForm() {
+    var form = document.getElementById('myForm');
+    form.submit();
+}
+
+var isListLayout = true;
+
+function toggleLayout() {
+  var logo = document.getElementById('list-layout');
+  var listLayoutContent = document.getElementById('list-layout-content');
+  var gridLayoutContent = document.getElementById('grid-layout-content');
+
+  if (isListLayout) {
+    listLayoutContent.style.display = 'none';
+    gridLayoutContent.style.display = 'block';
+    logo.classList.remove('list-layout');
+    logo.classList.add('grid-layout');
+    isListLayout = false;
+  } else {
+    listLayoutContent.style.display = 'block';
+    gridLayoutContent.style.display = 'none';
+    logo.classList.remove('grid-layout');
+    logo.classList.add('list-layout');
+    isListLayout = true;
+  }
+}
+</script>
+</head>
+<body>
+<div id="navigation">
+    <span><img th:src="@{/mydrive.png}" style="height: 50px; height:60px;"></span>
+    <div id="myPopup" class="form-container">
+        <form th:action="@{/drive/upload}" th:method="post" enctype="multipart/form-data">
+            <div class="link-list">
+                <input type="text" name = name th:value="${#authentication.principal.username}" style="display:none;">
+                <input type="file" name="files[]" multiple><br>
+                <input type="submit" value="Upload Files">
+            </div>
+        </form>
+    </div>
+    <ul>
+        <li>
+            <button onclick="togglePopup()" class="dropdown"
+                    style="width:110px; height:60px;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.4); font-size:20px;">
+                <img th:src="@{/new.png}">New
+            </button>
+        </li>
+        <br>
+        <li class="left-nav-button" ><a href="/drive/my-drive"><img th:src="@{/drivemydrive.png}"><span>   My Drive</span></a></li>
+        <li class="left-nav-button" ><a href="/drive/recent"><img th:src="@{/recent.png}">    Recent</a></li>
+        <li class="left-nav-button" ><a href="/drive/trash"><img th:src="@{/remove.png}">   Trash</a></li>
+    </ul>
+</div>
+<div id="header">
+    <form id="search-form" action="/drive/my-drive">
+        <input type="text" name="q" placeholder="&#x1F50D;   Search in Drive ">
+        <input type="submit" style="display:none">
+    </form>
+        <div id="button">
+            <button style="border:none; background-color:transparent;"><img th:src="@{/filter.png}"></button>
+        </div>
+        <div id="buttons">
+            <button style="border:none; background-color:transparent;"><img th:src="@{/support.png}"></button>
+            <button style="border:none; background-color:transparent;"><img th:src="@{/setting.png}"></button>
+            <button style="border:none; background-color:transparent;"><img th:src="@{/app.png}"></button>
+        </div>
+
+</div>
+
+<div id="fixed-page">
+    <div id="calendar"></div>
+    <div th:if="${fileId != ' '}">
+        <form th:action="@{/drive/rename{fileId}(fileId=${fileId})}" method="post" id="toggle-forms" class="form-container">
+            <div class="link-list">
+                <div ><input type="text" name="name"><input type="submit" > </div>
+                <a th:href="@{/drive/view/{fileId}(fileId=${fileId})}"><img src="preview.png"> Preview</a>
+                <a th:href="@{/drive/download{fileId}(fileId=${fileId})}"><img src="download.png"> Download</a>
+<!--                <a th:href="@{/drive/rename{fileId}(fileId=${fileId})}"><img src="rename.png"> Rename</a>-->
+                <a th:href="@{/drive/move{fileId}(fileId=${fileId})}"><img src="trash.png"> Move To Trash/Restore</a>
+                <a th:href="@{/drive/delete{fileId}(fileId=${fileId})}"><img src="remove.png"> Remove</a>
+                <a href="/drive/my-drive">Reset</a>
+            </div>
+        </form>
+    </div>
+    <script>
+        function navigateToLink(selectElement) {
+            var selectedValue = selectElement.value;
+            if (selectedValue !== "") {
+                window.location.href = selectedValue;
+            }
+        }
+    </script>
+    <div>
+         <span style="display:flex;">
+    <form>
+         <select id="links" class="dropdown" onchange="navigateToLink(this)">
+            <option value="">My Drive</option>
+            <option value="https://docs.google.com/document/d/1mvZ1PQ0g59na7sOsJvzI0FjsSDMSrYIJMeK-UZAcWiQ/edit">Google Docs</option>
+            <option value="https://docs.google.com/spreadsheets/d/16u3pt_CalEl11AM7bbJqQ3RjZmN-NVgc18GfJ8q67MY/edit#gid=0">Google Sheets</option>
+            <option value="https://docs.google.com/presentation/d/1-avPJnSPavKg5K_B_LYQD7pJsx15Akk0GMfn5aaytRw/edit#slide=id.p">Google Slides</option>
+             <option value="https://docs.google.com/forms/d/1n3XXzhqa2f5QYYDmMWV54YGy-SmBI8unmhX9y_oB4Cw/edit?pli=1">Google Forms</option>
+            <option value="https://docs.google.com/drawings/d/1GtHgvbSh4p3pAer8xDi4yYM6iPBfEKiwuu__AP97Niw/edit">Google Drawings</option>
+            <option value="https://www.google.com/maps/d/edit?mid=1UqKsoLRnX20thPzCCGZdHKbktjuBAMg&ll=19.670643476129545%2C82.75998700000002&z=4">Google My Maps</option>
+        </select>
+    </form>
+        <button onclick="togglePopupFix()" class="dropdown"
+                      style="margin-left: 740px; width:40px; height:40px;"><img
+                th:src="@{/outline_filter.png}"></button>
+<!--        <button onclick="togglePopupFix()" class="dropdown"-->
+<!--                      style="margin-left:10px; width:40px; height:40px;"><img-->
+<!--                th:src="@{/gridlayout.png}"></button>-->
+         <a  id="list-layout-link" onclick="toggleLayout()" class="list-layout-image">
+            <img th:src="@{/listlayout.png}" alt="List Layout"  id="list-layout">
+        </a>
+         </span>
+    </div>
+    <div id="fixed-popup" style="display: none; margin-left: 10px; position:absolute;">
+    <span>
+      <form class="dropdown-form" action="/drive/my-drive">
+        <select class="inner-dropdown" name="q" onchange="this.form.submit()">
+            <option> File Type </option>
+            <option value="type:all">All Files</option>
+            <option value="type:image">Photos & Images</option>
+            <option value="type:video"> Videos</option>
+            <option value="type:pdf">PDFs</option>
+            <option value="type:document">Documents</option>
+            <option value="type:zip">Archives(zip)</option>
+        </select>
+    </form>
+    </span>
+        <span>
+      <form class="dropdown-form">
+        <select class="inner-dropdown" onchange="navigateToLink(this)">
+            <optgroup label="People">
+                <option value="">People</option>
+                <option value="http://localhost:9999/login">Log In</option>
+                <option value="http://localhost:9999/register">Create New User</option>
+
+        </select>
+    </form>
+    </span>
+        <span>
+       <form class="dropdown-form" action="/drive/my-drive">
+        <select class="inner-dropdown" name="q" onchange="this.form.submit()">
+            <option> Last modified </option>
+            <option value="today">Today</option>
+            <option value="last-weak">Last 7 days</option>
+            <option value="last-month"> Last 30 days</option>
+        </select>
+    </form>
+    </span>
+    </div>
+</div>
+
+<div id="content">
+    <div id="list-layout-content">
+    <div>
+        <p>Suggested</p><br>
+        <div class="image-container">
+            <th:block th:each="file, iterStat : ${allFiles}" th:if="${iterStat.count} &lt;= 4">
+                <div class="image-item" th:if="${file.fileType != null and (file.fileType.equals('png'))}">
+                    <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                        <span th:text="${file.fileName}" class="file-name"></span>
+                        <img th:src="@{/drive/view/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="Image">
+                    </a>
+                </div>
+                <div class="pdf-item" th:if="${file.fileType != null and file.fileType.equals('pdf')}">
+                    <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                        <span th:text="${file.fileName}" class="file-name"></span>
+                        <img th:src="@{/drive/pdfthumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="PDF Thumbnail">
+                    </a>
+                </div>
+            </th:block>
+        </div><br><hr>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Owner</th>
+                <th>Last Modified</th>
+                <th>File Size</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="file, index : ${allFiles}">
+                <td><a th:href="@{/drive/view/{fileId}(fileId=${file.id})}"><span th:text="${file.fileName}"
+                                                                            style="color:black;"></span></a></td>
+                <td th:text="${file.userName}"></td>
+                <td th:text="${file.updatedAt}"></td>
+                <td th:text="${formattedSizes[__${index.index}__]}"></td>
+                <td>
+                    <form id="myForm" action="/">
+                        <input type="hidden" th:name="fileId" th:value="${file.id}">
+                        <button style="border:none; background-color:transparent;" onclick="submitForm()"><img
+                                th:src="@{/more.png}"></button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+    <div id="grid-layout-content">
+        <p>Suggested</p><br>
+        <div class="image-container">
+            <th:block th:each="file : ${allFiles}">
+                <div class="image-item" th:if="${file.fileType != null and (file.fileType.equals('png'))}">
+                    <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                        <span th:text="${file.fileName}" class="file-name"></span>
+                        <img th:src="@{/drive/view/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="Image">
+                    </a>
+                </div>
+                <div class="pdf-item" th:if="${file.fileType != null and file.fileType.equals('pdf')}">
+                    <a th:href="@{/drive/view/{fileId}(fileId=${file.id})}">
+                        <span th:text="${file.fileName}" class="file-name"></span>
+                        <img th:src="@{/drive/pdfthumbnail/{fileId}(fileId=${file.id})}" class="thumbnail-image" alt="PDF Thumbnail">
+                    </a>
+                </div>
+            </th:block>
+        </div>
+    </div>
+</div>
+<div id="navigation-right">
+    <form th:action ="@{/logout}" method="post"><button type="submit">O</button></form>
+    <button id="showCalendarButton" style="border:none; background-color:transparent;"><img th:src="@{/calender.png}" alt="calender" id="calender-logo"></button>
+    <button style="border:none; background-color:transparent;"><img th:src="@{/keep.png}" alt="keep" class="right-side-logo"></button>
+    <button style="border:none; background-color:transparent;"><img th:src="@{/task.png}" alt="tasks" class="right-side-logo"></button>
+    <button style="border:none; background-color:transparent;"><img th:src="@{/peoples.png}" alt="contacts" class="right-side-logo"></button>
+    <a href="https://workspace.google.com/u/0/marketplace/appfinder?host=drive">
+        <button style="border:none; background-color:transparent;"><img th:src="@{/new.png}" alt="add icons" class="right-side-logo"></button>
+    </a>
+</div>
+</body>
+</html>

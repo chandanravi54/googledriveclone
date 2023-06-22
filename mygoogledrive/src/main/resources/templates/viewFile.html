@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>View File</title>
+</head>
+<body>
+<h2>File Details</h2>
+<p>File Name: <span th:text="${file.fileName}"></span></p>
+<p>File Type: <span th:text="${file.fileType}"></span></p>
+
+
+<div th:if="${file.fileType.startsWith('image/')}">
+  <h3>Image Preview</h3>
+  <img th:src="@{'/drive/view/' + ${file.id}}" alt="Image Preview" />
+</div>
+
+<div th:if="${file.fileType == 'application/pdf'}">
+  <h3>PDF Preview</h3>
+  <object th:data="@{'/drive/view/' + ${file.id}}" type="application/pdf" width="100%" height="600px">
+    <p>Your browser does not support PDFs. <a href="@{'/drive/view/' + ${file.id}}">Download the PDF</a> instead.</p>
+  </object>
+</div>
+
+<div th:if="${file.fileType == 'video/mp4'}">
+  <h3>Video Preview</h3>
+  <video width="100%" height="auto" controls>
+    <source th:src="@{'/drive/view/' + ${file.id}}" th:type="${file.fileType}" />
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<a href="/" th:href="@{/}">Go back to Home</a>
+</body>
+</html>
