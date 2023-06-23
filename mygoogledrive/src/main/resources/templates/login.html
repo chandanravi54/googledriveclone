@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <title>User Login</title>
     <style>
@@ -55,6 +55,7 @@
 
 <form th:action="@{/authenticateTheUser}" th:method="post">
     <div>
+    <div>
         <label for="email">Email:</label>
         <input type="email" id="email" name="username" required>
     </div>
@@ -66,6 +67,9 @@
 
     <div>
         <input type="submit" value="Log In">
+    </div>
+        <br>
+    Don't have an account? <a href="/register">Create One</a>
     </div>
 </form>
 </body>
