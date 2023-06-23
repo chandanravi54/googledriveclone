@@ -333,10 +333,10 @@ function toggleLayout() {
 <div id="navigation">
     <span><img th:src="@{/mydrive.png}" style="height: 50px; height:60px;"></span>
     <div id="myPopup" class="form-container">
-        <form th:action="@{/drive/upload}" th:method="post" enctype="multipart/form-data">
+        <form th:action="@{/drive/upload}" th:method="post" enctype="multipart/form-data" >
             <div class="link-list">
                 <input type="text" name = name th:value="${#authentication.principal.username}" style="display:none;">
-                <input type="file" name="files[]" multiple><br>
+                <input type="file" name="files[]" multiple required><br>
                 <input type="submit" value="Upload Files">
             </div>
         </form>
@@ -375,7 +375,7 @@ function toggleLayout() {
     <div th:if="${fileId != ' '}">
         <form th:action="@{/drive/rename{fileId}(fileId=${fileId})}" method="post" id="toggle-forms" class="form-container">
             <div class="link-list">
-                <div ><input type="text" name="name"><input type="submit" > </div>
+                <div ><input type="text" name="name"><input type="submit" >Rename</div>
                 <a th:href="@{/drive/view/{fileId}(fileId=${fileId})}"><img src="preview.png"> Preview</a>
                 <a th:href="@{/drive/download{fileId}(fileId=${fileId})}"><img src="download.png"> Download</a>
 <!--                <a th:href="@{/drive/rename{fileId}(fileId=${fileId})}"><img src="rename.png"> Rename</a>-->
@@ -436,8 +436,8 @@ function toggleLayout() {
         <select class="inner-dropdown" onchange="navigateToLink(this)">
             <optgroup label="People">
                 <option value="">People</option>
-                <option value="http://localhost:9999/login">Log In</option>
-                <option value="http://localhost:9999/register">Create New User</option>
+                <option value="https://googledriveclone-production.up.railway.app/login">Log In</option>
+                <option value="https://googledriveclone-production.up.railway.app/register">Create New User</option>
 
         </select>
     </form>
