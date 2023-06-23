@@ -24,16 +24,20 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
 
     public String createUser(User user, String confirmPassword) {
-        if (userRepository.findByEmailId(user.getEmailId()).isEmpty()) {
-            if (user.getPassword().equals(confirmPassword)) {
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-                userRepository.save(user);
-                return "created";
+        if (userRepository.findByUserName(user.getUserName()).isEmpty()) {
+            if (userRepository.findByEmailId(user.getEmailId()).isEmpty()) {
+                if (user.getPassword().equals(confirmPassword)) {
+                    user.setPassword(passwordEncoder.encode(user.getPassword()));
+                    userRepository.save(user);
+                    return "created";
+                } else {
+                    return "Confirm Password Not Matched !!!";
+                }
             } else {
-                return "Confirm Password Not Matched !!!";
+                return "Email Already Exist !!!";
             }
         } else {
-            return "Email Already Exist !!!";
+            return "User Name Already Exist !!!";
         }
     }
 
