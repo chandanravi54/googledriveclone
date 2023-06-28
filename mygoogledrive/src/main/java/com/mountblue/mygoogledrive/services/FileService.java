@@ -4,10 +4,9 @@ import com.mountblue.mygoogledrive.entities.File;
 import com.mountblue.mygoogledrive.repositories.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.temporal.ChronoUnit;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 
@@ -100,5 +99,9 @@ public class FileService {
 
     public File getFileByFileId(long id){
         return fileRepository.findById(id).get();
+    }
+
+    public File getFileDetails(long fileId) {
+        return fileRepository.findById(fileId).get();
     }
 }

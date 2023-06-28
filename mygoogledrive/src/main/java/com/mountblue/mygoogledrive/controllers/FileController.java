@@ -1,9 +1,12 @@
 package com.mountblue.mygoogledrive.controllers;
 
+import com.mountblue.mygoogledrive.entities.Contact;
 import com.mountblue.mygoogledrive.entities.File;
+import com.mountblue.mygoogledrive.entities.User;
+import com.mountblue.mygoogledrive.services.ContactService;
 import com.mountblue.mygoogledrive.services.FileService;
-import com.mountblue.mygoogledrive.services.UserService;
 import com.mountblue.mygoogledrive.services.ThumbnailService;
+import com.mountblue.mygoogledrive.services.UserService;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
@@ -18,9 +21,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +45,8 @@ public class FileController {
 
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private ContactService contactService;
 
     private Logger logger = LoggerFactory.getLogger(java.io.File.class);
 
@@ -51,12 +55,24 @@ public class FileController {
     public String home(Authentication authentication, Model model, @RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId,
                        @RequestParam(value = "q", defaultValue = "", required = false) String q) {
         String name = authentication.getName();
+        User user = userService.getUserByUsername(name);
+        model.addAttribute("user", user);
         List<File> allFiles = fileService.getAllFiles(q, name);
         List<String> formattedSizes = new ArrayList<>();
 
         for (File file : allFiles) {
             formattedSizes.add(formatFileSize(file.getSize()));
         }
+//        List<File> lastFourFiles = new ArrayList<>();
+//        int startIndex = Math.max(0, allFiles.size() - 6);
+//        for (int i = startIndex; i < allFiles.size(); i++) {
+//            lastFourFiles.add(allFiles.get(i));
+//        }
+//
+//        model.addAttribute("lastSixFiles", lastFourFiles);
+
+        List<Contact> contacts = contactService.showContacts(authentication);
+        model.addAttribute("contacts",contacts);
         model.addAttribute("fileId", fileId);
         model.addAttribute("allFiles", allFiles);
         model.addAttribute("formattedSizes", formattedSizes);
@@ -76,6 +92,8 @@ public class FileController {
     @GetMapping("/drive/trash")
     public String trash(Authentication authentication ,Model model, @RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId) {
         String name = authentication.getName();
+        User user = userService.getUserByUsername(name);
+        model.addAttribute("user", user);
         List<File> allFiles = fileService.getTrashedFiles(name);
         List<String> formattedSizes = new ArrayList<>();
 
@@ -92,6 +110,8 @@ public class FileController {
     @GetMapping("/drive/recent")
     public String recent(Authentication authentication ,Model model, @RequestParam(value = "fileId", defaultValue = " ", required = false) String fileId) {
         String name = authentication.getName();
+        User user = userService.getUserByUsername(name);
+        model.addAttribute("user", user);
         List<File> allFiles = fileService.getRecentFiles(name);
         List<String> formattedSizes = new ArrayList<>();
 
@@ -107,6 +127,7 @@ public class FileController {
 
     @PostMapping("/drive/upload")
     public String fileUpload(@RequestParam("name") String name,@RequestParam("files[]") MultipartFile[] files, Model model) throws IOException {
+        User user = userService.getUserByUsername(name);
         System.out.println(name);
         Arrays.stream(files).forEach(multipartFile -> {
             File uploadFile = new File();
@@ -123,6 +144,8 @@ public class FileController {
                 throw new RuntimeException(e);
             }
             uploadFile.setSize(multipartFile.getSize());
+            uploadFile.setUser(user);
+            System.out.println(user);
             fileService.createFile(uploadFile);
         });
         model.addAttribute("success", "File Upload Successfully");
@@ -153,12 +176,49 @@ public class FileController {
     private String getMimeTypeFromExtension(String extension) {
         if (extension.equalsIgnoreCase("png")) {
             return "image/png";
+        }  else if (extension.equalsIgnoreCase("jpg")) {
+            return "image/jpg";
         } else if (extension.equalsIgnoreCase("pdf")) {
             return "application/pdf";
-        } else if (extension.equalsIgnoreCase("mp4")) {
-            return "video/mp4";
+        } else if (extension.equalsIgnoreCase("webm")) {
+            return "video/webm";
         }
-        return null;
+        else if (extension.equalsIgnoreCase("gif")) {
+            return MimeTypeUtils.IMAGE_GIF_VALUE;
+        }  else if (extension.equalsIgnoreCase("doc") || extension.equalsIgnoreCase("docx")) {
+            return "application/msword";
+        } else if (extension.equalsIgnoreCase("xls") || extension.equalsIgnoreCase("xlsx")) {
+            return "application/vnd.ms-excel";
+        } else if (extension.equalsIgnoreCase("ppt") || extension.equalsIgnoreCase("pptx")) {
+            return "application/vnd.ms-powerpoint";
+        } else if (extension.equalsIgnoreCase("mp4") || extension.equalsIgnoreCase("m4v") ||
+                extension.equalsIgnoreCase("mov") || extension.equalsIgnoreCase("avi") ||
+                extension.equalsIgnoreCase("mkv")) {
+            return "video/" + extension;
+        } else if (extension.equalsIgnoreCase("html") || extension.equalsIgnoreCase("htm")) {
+            return "text/html";
+        } else if (extension.equalsIgnoreCase("css")) {
+            return "text/css";
+        } else if (extension.equalsIgnoreCase("js")) {
+            return "application/javascript";
+        } else if (extension.equalsIgnoreCase("txt")) {
+            return "text/plain";
+        } else if (extension.equalsIgnoreCase("csv")) {
+            return "text/csv";
+        } else if (extension.equalsIgnoreCase("xml")) {
+            return "application/xml";
+        } else if (extension.equalsIgnoreCase("json")) {
+            return "application/json";
+        } else if (extension.equalsIgnoreCase("mp3")) {
+            return "audio/mpeg";
+        } else if (extension.equalsIgnoreCase("wav")) {
+            return "audio/wav";
+        } else if (extension.equalsIgnoreCase("zip")) {
+            return "application/zip";
+        } else {
+            // Default MIME type for unknown file types
+            return MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
     }
     @GetMapping("/drive/pdfthumbnail/{fileId}")
     @PreAuthorize("authentication.name == @fileService.getFileByFileId(#fileId).getUserName()")
@@ -209,7 +269,6 @@ public class FileController {
     @GetMapping("/drive/delete{fileId}")
     @PreAuthorize("authentication.name == @fileService.getFileByFileId(#fileId).getUserName()")
     public String deleteFile(@PathVariable("fileId") long fileId) {
-        System.out.println("-----");
         fileService.delete(fileId);
         return "redirect:/drive";
     }
@@ -220,6 +279,5 @@ public class FileController {
         fileService.renameFile(fileId, name);
         return "redirect:/drive";
     }
-
 
 }
